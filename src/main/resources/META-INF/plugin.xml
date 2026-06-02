@@ -1,0 +1,13 @@
+<idea-plugin>
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable
+                id="com.singlestore.intellij.settings"
+                displayName="SingleStore Language Server"
+                parentId="tools"
+                instance="com.singlestore.intellij.settings.SingleStoreLspConfigurable"/>
+        <platform.lsp.serverSupportProvider
+                implementation="com.singlestore.intellij.lsp.SingleStoreLspServerSupportProvider"/>
+    </extensions>
+</idea-plugin>
