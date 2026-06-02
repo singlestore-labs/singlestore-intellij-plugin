@@ -5,6 +5,8 @@ build/
 # IntelliJ
 .idea/
 *.iml
+.intellijPlatform/
+.kotlin/
 out/
 
 # Wrapper
@@ -17,3 +19,5 @@ out/
 *.log
 hs_err_pid*
 replay_pid*
+
+.vscode/

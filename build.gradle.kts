@@ -17,7 +17,9 @@ dependencies {
     testImplementation(kotlin("test"))
 
     intellijPlatform {
-        intellijIdeaCommunity("2024.3.6", useInstaller = false)
+        intellijIdea("2024.3.6") {
+            useInstaller = false
+        }
         testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
     }
 }

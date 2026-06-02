@@ -63,7 +63,7 @@ internal class SingleStoreWsProxy(private val targetUri: URI) : LocalPortProxy {
                 }
 
                 override fun onError(webSocket: WebSocket, error: Throwable) {
-                    this.close()
+                    socket.close()
                 }
             }
 
