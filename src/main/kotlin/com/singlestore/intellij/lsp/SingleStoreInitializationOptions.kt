@@ -1,12 +1,12 @@
 package com.singlestore.intellij.lsp
 
-import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
 import com.singlestore.intellij.settings.SingleStoreLspSettings
 
 object SingleStoreInitializationOptions {
     private val pluginVersion: String
-        get() = PluginManagerCore.getPlugin(PluginId.getId("com.singlestore.client.plugin"))?.version ?: "unknown"
+        get() = PluginManager.getPlugin(PluginId.getId("com.singlestore.client.plugin"))?.version ?: "unknown"
     fun build(state: SingleStoreLspSettings.State): Map<String, Any> {
         val database = linkedMapOf<String, Any>(
             "host" to state.dbHost,
