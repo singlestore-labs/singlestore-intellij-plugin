@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.singlestore.client"
-version = findProperty("version") as String? ?: "0.1.0"
+version = (findProperty("version") as? String)?.takeIf { it != "unspecified" } ?: "0.1.0"
 
 repositories {
     mavenCentral()
@@ -30,6 +30,23 @@ kotlin {
 }
 
 tasks {
+    val generateVersionProperties by registering {
+        val outputDir = layout.buildDirectory.dir("generated/resources")
+        val pluginVersion = version.toString()
+        inputs.property("pluginVersion", pluginVersion)
+        outputs.dir(outputDir)
+        doLast {
+            val file = outputDir.get().file("version.properties").asFile
+            file.parentFile.mkdirs()
+            file.writeText("plugin.version=$pluginVersion\n")
+        }
+    }
+
+    processResources {
+        dependsOn(generateVersionProperties)
+        from(generateVersionProperties.map { it.outputs.files })
+    }
+
     runIde {
         if (project.hasProperty("debugPlugin")) {
             jvmArgs("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005")
