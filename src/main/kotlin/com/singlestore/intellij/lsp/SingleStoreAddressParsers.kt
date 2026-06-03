@@ -5,6 +5,9 @@ import java.net.URI
 internal data class TcpTarget(val host: String, val port: Int)
 
 internal object SingleStoreAddressParsers {
+    fun isWebSocketAddress(address: String): Boolean =
+        address.trimStart().let { it.startsWith("ws://", ignoreCase = true) || it.startsWith("wss://", ignoreCase = true) }
+
     fun parseTcpAddress(address: String): TcpTarget {
         val trimmed = address.trim()
         val separator = trimmed.lastIndexOf(':')

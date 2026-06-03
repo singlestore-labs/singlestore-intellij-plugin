@@ -7,16 +7,10 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
 
-enum class SingleStoreServerProtocol {
-    TCP,
-    WEBSOCKET,
-}
-
 @Service(Service.Level.APP)
 @State(name = "SingleStoreLspSettings", storages = [Storage("singlestore-lsp.xml")])
 class SingleStoreLspSettings : PersistentStateComponent<SingleStoreLspSettings.State> {
     data class State(
-        var protocol: SingleStoreServerProtocol = SingleStoreServerProtocol.TCP,
         var serverAddress: String = "127.0.0.1:8080",
         var dbHost: String = "127.0.0.1",
         var dbPort: Int = 3306,

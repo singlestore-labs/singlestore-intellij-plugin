@@ -1,12 +1,16 @@
 package com.singlestore.intellij.settings
 
 import com.intellij.openapi.options.SearchableConfigurable
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.IconLoader
+import com.intellij.platform.lsp.api.LspServerManager
+import com.singlestore.intellij.lsp.SingleStoreInitializationOptions
+import com.singlestore.intellij.lsp.SingleStoreLspServerSupportProvider
+import org.eclipse.lsp4j.DidChangeConfigurationParams
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
 import javax.swing.JCheckBox
-import javax.swing.JComboBox
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -14,7 +18,6 @@ import javax.swing.JPasswordField
 import javax.swing.JTextField
 
 class SingleStoreLspConfigurable : SearchableConfigurable {
-    private val protocol = JComboBox(SingleStoreServerProtocol.entries.toTypedArray())
     private val serverAddress = JTextField()
     private val dbHost = JTextField()
     private val dbPort = JTextField()
@@ -38,7 +41,6 @@ class SingleStoreLspConfigurable : SearchableConfigurable {
             },
         )
 
-        addRow(row++, "Server protocol", protocol)
         addRow(row++, "Server address", serverAddress)
         addRow(row++, "Database host", dbHost)
         addRow(row++, "Database port", dbPort)
@@ -101,8 +103,7 @@ class SingleStoreLspConfigurable : SearchableConfigurable {
 
     override fun isModified(): Boolean {
         val state = SingleStoreLspSettings.getInstance().state
-        return state.protocol != protocol.selectedItem ||
-            state.serverAddress != serverAddress.text ||
+        return state.serverAddress != serverAddress.text ||
             state.dbHost != dbHost.text ||
             state.dbPort != dbPort.text.toIntOrNull() ||
             state.dbUsername != dbUsername.text ||
@@ -113,7 +114,16 @@ class SingleStoreLspConfigurable : SearchableConfigurable {
 
     override fun apply() {
         val state = SingleStoreLspSettings.getInstance().state
-        state.protocol = protocol.selectedItem as SingleStoreServerProtocol
+
+        // Snapshot before modifying to detect what changed
+        val oldServerAddress = state.serverAddress
+        val oldDbHost = state.dbHost
+        val oldDbPort = state.dbPort
+        val oldDbUsername = state.dbUsername
+        val oldDbPassword = state.dbPassword
+        val oldDbName = state.dbName
+        val oldDbSsl = state.dbSsl
+
         state.serverAddress = serverAddress.text.trim()
         state.dbHost = dbHost.text.trim()
         state.dbPort = dbPort.text.toIntOrNull() ?: 3306
@@ -121,11 +131,35 @@ class SingleStoreLspConfigurable : SearchableConfigurable {
         state.dbPassword = String(dbPassword.password)
         state.dbName = dbName.text.trim()
         state.dbSsl = dbSsl.isSelected
+
+        val serverAddressChanged = oldServerAddress != state.serverAddress
+        val dbSettingsChanged = oldDbHost != state.dbHost ||
+            oldDbPort != state.dbPort ||
+            oldDbUsername != state.dbUsername ||
+            oldDbPassword != state.dbPassword ||
+            oldDbName != state.dbName ||
+            oldDbSsl != state.dbSsl
+
+        if (!serverAddressChanged && !dbSettingsChanged) return
+
+        for (project in ProjectManager.getInstance().openProjects) {
+            val manager = LspServerManager.getInstance(project)
+            if (serverAddressChanged) {
+                // Re-create the proxy with the new address by restarting the server
+                manager.stopAndRestartIfNeeded(SingleStoreLspServerSupportProvider::class.java)
+            } else {
+                // Send workspace/didChangeConfiguration so the server updates its DB connection
+                // without restarting (no LSP session interruption)
+                val params = DidChangeConfigurationParams(SingleStoreInitializationOptions.build(state))
+                manager.getServersForProvider(SingleStoreLspServerSupportProvider::class.java).forEach { server ->
+                    server.sendNotification { it.workspaceService.didChangeConfiguration(params) }
+                }
+            }
+        }
     }
 
     override fun reset() {
         val state = SingleStoreLspSettings.getInstance().state
-        protocol.selectedItem = state.protocol
         serverAddress.text = state.serverAddress
         dbHost.text = state.dbHost
         dbPort.text = state.dbPort.toString()

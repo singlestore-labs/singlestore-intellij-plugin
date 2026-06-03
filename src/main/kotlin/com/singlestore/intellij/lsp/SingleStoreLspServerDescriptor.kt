@@ -6,7 +6,6 @@ import com.intellij.platform.lsp.api.LspCommunicationChannel
 import com.intellij.platform.lsp.api.LspServerListener
 import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
 import com.singlestore.intellij.settings.SingleStoreLspSettings
-import com.singlestore.intellij.settings.SingleStoreServerProtocol
 import org.eclipse.lsp4j.ConfigurationItem
 
 class SingleStoreLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor(project, "SingleStore Language Server") {
@@ -17,22 +16,18 @@ class SingleStoreLspServerDescriptor(project: Project) : ProjectWideLspServerDes
             proxy?.close()
 
             val state = SingleStoreLspSettings.getInstance().state
-            proxy = when (state.protocol) {
-                SingleStoreServerProtocol.TCP -> {
-                    val tcpTarget = SingleStoreAddressParsers.parseTcpAddress(state.serverAddress)
-                    SingleStoreTcpProxy(tcpTarget.host, tcpTarget.port)
-                }
-
-                SingleStoreServerProtocol.WEBSOCKET -> {
-                    val wsTarget = SingleStoreAddressParsers.parseWebSocketAddress(state.serverAddress)
-                    SingleStoreWsProxy(wsTarget)
-                }
+            proxy = if (SingleStoreAddressParsers.isWebSocketAddress(state.serverAddress)) {
+                val wsTarget = SingleStoreAddressParsers.parseWebSocketAddress(state.serverAddress)
+                SingleStoreWsProxy(wsTarget)
+            } else {
+                val tcpTarget = SingleStoreAddressParsers.parseTcpAddress(state.serverAddress)
+                SingleStoreTcpProxy(tcpTarget.host, tcpTarget.port)
             }
 
             return LspCommunicationChannel.Socket(requireNotNull(proxy).localPort, startProcess = false)
         }
 
-    override fun isSupportedFile(file: VirtualFile): Boolean = file.extension.equals("sql", ignoreCase = true)
+    override fun isSupportedFile(file: VirtualFile): Boolean = file.name.endsWith(".s2db.sql", ignoreCase = true)
 
     override fun getLanguageId(file: VirtualFile): String = "sql"
 
