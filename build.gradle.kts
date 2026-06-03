@@ -64,7 +64,7 @@ intellijPlatform {
         id = "com.singlestore.client.plugin"
         name = "SingleStore Language Server Client"
         version = project.version.toString()
-        description = "SingleStore language server client for JetBrains IDEs."
+        description = providers.fileContents(layout.projectDirectory.file("DESCRIPTION.html")).asText
         ideaVersion {
             sinceBuild = "243"
         }
