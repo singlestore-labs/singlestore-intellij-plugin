@@ -15,6 +15,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    testRuntimeOnly("junit:junit:4.13.2")
 
     intellijPlatform {
         intellijIdea("2024.3.6") {
@@ -37,6 +38,7 @@ tasks {
 
     test {
         useJUnitPlatform()
+        jvmArgs("-Djava.awt.headless=true")
     }
 }
 
