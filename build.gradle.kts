@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.singlestore.client"
-version = "0.1.0"
+version = findProperty("version") as String? ?: "0.1.0"
 
 repositories {
     mavenCentral()
