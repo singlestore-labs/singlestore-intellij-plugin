@@ -1,8 +1,12 @@
 package com.singlestore.intellij.lsp
 
+import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.openapi.extensions.PluginId
 import com.singlestore.intellij.settings.SingleStoreLspSettings
 
 object SingleStoreInitializationOptions {
+    private val pluginVersion: String
+        get() = PluginManagerCore.getPlugin(PluginId.getId("com.singlestore.intellij.plugin"))?.version ?: "unknown"
     fun build(state: SingleStoreLspSettings.State): Map<String, Any> {
         val database = linkedMapOf<String, Any>(
             "host" to state.dbHost,
@@ -19,8 +23,8 @@ object SingleStoreInitializationOptions {
         return mapOf(
             "database" to database,
             "client" to mapOf(
-                "name" to "intellij-singlestore",
-                "version" to "0.1.0",
+                "name" to "Singlestore IntelliJ Extension",
+                "version" to pluginVersion,
             ),
         )
     }
