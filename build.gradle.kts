@@ -29,6 +29,12 @@ kotlin {
 }
 
 tasks {
+    runIde {
+        if (project.hasProperty("debugPlugin")) {
+            jvmArgs("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005")
+        }
+    }
+
     test {
         useJUnitPlatform()
     }

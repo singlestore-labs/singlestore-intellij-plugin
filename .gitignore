@@ -8,6 +8,7 @@ build/
 .intellijPlatform/
 .kotlin/
 out/
+bin/
 
 # Wrapper
 !gradle/wrapper/gradle-wrapper.jar

@@ -3,6 +3,11 @@
     <depends>com.intellij.modules.ultimate</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <fileType name="SingleStore SQL"
+                  language="SingleStore SQL"
+                  implementationClass="com.singlestore.intellij.lsp.SingleStoreSqlFileType"
+                  fieldName="INSTANCE"
+                  patterns="*.s2db.sql"/>
         <applicationConfigurable
                 id="com.singlestore.intellij.settings"
                 displayName="SingleStore Language Server"

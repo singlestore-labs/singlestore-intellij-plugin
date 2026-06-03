@@ -6,7 +6,7 @@ import com.intellij.platform.lsp.api.LspServerSupportProvider
 
 class SingleStoreLspServerSupportProvider : LspServerSupportProvider {
     override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerSupportProvider.LspServerStarter) {
-        if (!file.extension.equals("sql", ignoreCase = true)) {
+        if (!file.name.endsWith(".s2db.sql", ignoreCase = true)) {
             return
         }
 
