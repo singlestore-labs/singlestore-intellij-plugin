@@ -3,7 +3,7 @@ name: security_scans
 on:
   push:
     branches:
-      - 'master'
+      - 'main'
   pull_request:
 
 jobs:
