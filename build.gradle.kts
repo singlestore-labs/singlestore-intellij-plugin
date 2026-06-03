@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.10.2"
 }
 
-group = "com.singlestore.intellij"
+group = "com.singlestore.client"
 version = "0.1.0"
 
 repositories {
@@ -44,10 +44,10 @@ tasks {
 
 intellijPlatform {
     pluginConfiguration {
-        id = "com.singlestore.intellij.plugin"
-        name = "SingleStore IntelliJ Plugin"
+        id = "com.singlestore.client.plugin"
+        name = "SingleStore Language Server Client"
         version = project.version.toString()
-        description = "SingleStore language server client for IntelliJ IDEA."
+        description = "SingleStore language server client for JetBrains IDEs."
         ideaVersion {
             sinceBuild = "243"
         }
