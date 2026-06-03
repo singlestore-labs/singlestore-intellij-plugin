@@ -21,4 +21,4 @@ Open **Settings | Tools | SingleStore Language Server** and configure:
   - WebSocket: `ws://127.0.0.1:8080/`
 - **Database credentials** used by the language server for schema-aware completion.
 
-The plugin starts LSP support for `.sql` files and sends initialization options compatible with the SingleStore language server README.
+The plugin starts LSP support for `.s2db.sql` files and sends initialization options compatible with the SingleStore language server README.
