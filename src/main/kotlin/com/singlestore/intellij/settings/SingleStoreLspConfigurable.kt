@@ -1,6 +1,7 @@
 package com.singlestore.intellij.settings
 
 import com.intellij.openapi.options.SearchableConfigurable
+import com.intellij.openapi.util.IconLoader
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
@@ -24,6 +25,19 @@ class SingleStoreLspConfigurable : SearchableConfigurable {
 
     private val panel = JPanel(GridBagLayout()).apply {
         var row = 0
+
+        // Logo at the top of the panel
+        add(
+            JLabel(IconLoader.getIcon("/icons/singlestore_logo.png", SingleStoreLspConfigurable::class.java)),
+            GridBagConstraints().apply {
+                gridx = 0
+                gridy = row++
+                gridwidth = 2
+                anchor = GridBagConstraints.WEST
+                insets = Insets(0, 0, 16, 0)
+            },
+        )
+
         addRow(row++, "Server protocol", protocol)
         addRow(row++, "Server address", serverAddress)
         addRow(row++, "Database host", dbHost)
