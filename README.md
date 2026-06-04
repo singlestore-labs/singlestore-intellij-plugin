@@ -37,8 +37,8 @@ The protocol is inferred automatically from the address format:
 | Format | Protocol |
 |---|---|
 | `host:port` (e.g. `127.0.0.1:8080`) | TCP |
-| `ws://host:port/path` | WebSocket |
-| `wss://host:port/path` | WebSocket over TLS |
+| `ws://host:port` | WebSocket |
+| `wss://host:port` | WebSocket over TLS |
 
 ### Database credentials
 
